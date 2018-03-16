@@ -26,3 +26,4 @@ I use this repository as exercise for make me fit of open source projects.
 ### Changes that I have done  
 
 - Documented the code. Put in some comments.  
+- In the example code I put a mention: ```You can also write in lowercase symbols```  
