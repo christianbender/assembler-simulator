@@ -1401,6 +1401,7 @@ var app = angular.module('ASMSimulator', []);
     // mention: for using lowercase symbols.
     $scope.code = "; You can also write in lowercase symbols\n; Simple example\n; Writes Hello World to the output\n\n	JMP start\nhello: DB \"Hello World!\" ; Variable\n       DB 0	; String terminator\n\nstart:\n	MOV C, hello    ; Point to var \n	MOV D, 232	; Point to output\n	CALL print\n        HLT             ; Stop execution\n\nprint:			; print(C:*from, D:*to)\n	PUSH A\n	PUSH B\n	MOV B, 0\n.loop:\n	MOV A, [C]	; Get char from var\n	MOV [D], A	; Write to output\n	INC C\n	INC D  \n	CMP B, [C]	; Check if end\n	JNZ .loop	; jump if not\n\n	POP B\n	POP A\n	RET";
 
+    // resets the full system.
     $scope.reset = function () {
         cpu.reset();
         memory.reset();
@@ -1408,7 +1409,10 @@ var app = angular.module('ASMSimulator', []);
         $scope.selectedLine = -1;
     };
 
+    // executes one step!
     $scope.executeStep = function () {
+
+        // makes sure the program is assemble and in the memory.
         if (!$scope.checkPrgrmLoaded()) {
             $scope.assemble();
         }
@@ -1429,13 +1433,20 @@ var app = angular.module('ASMSimulator', []);
         }
     };
 
+    // handle for the time-execution.
     var runner;
+
+    // runs the time execution of the source program.
     $scope.run = function () {
+
+        // makes sure the program is assemble and in the memory.
         if (!$scope.checkPrgrmLoaded()) {
             $scope.assemble();
         }
 
         $scope.isRunning = true;
+
+        // runs one time step.
         runner = $timeout(function () {
             if ($scope.executeStep() === true) {
                 $scope.run();
@@ -1445,11 +1456,14 @@ var app = angular.module('ASMSimulator', []);
         }, 1000 / $scope.speed);
     };
 
+    // stops the excution of the program 
+    // uses the handle 'runner' above.
     $scope.stop = function () {
         $timeout.cancel(runner);
         $scope.isRunning = false;
     };
 
+    // makes sure the machine-program is in the memory.
     $scope.checkPrgrmLoaded = function () {
         for (var i = 0, l = memory.data.length; i < l; i++) {
             if (memory.data[i] !== 0) {
@@ -1460,6 +1474,7 @@ var app = angular.module('ASMSimulator', []);
         return false;
     };
 
+    // converts numeric value into a char.
     $scope.getChar = function (value) {
         var text = String.fromCharCode(value);
 
@@ -1470,22 +1485,32 @@ var app = angular.module('ASMSimulator', []);
         }
     };
 
+    /*
+        1. assembles the code
+        2. makes sure the machine-program fits into the memory.
+        3. writes the machine-program into the memory.
+    */
     $scope.assemble = function () {
         try {
             $scope.reset();
 
+            // fechtes the needed data
             var assembly = assembler.go($scope.code);
             $scope.mapping = assembly.mapping;
             var binary = assembly.code;
             $scope.labels = assembly.labels;
 
+            // make sure the machine-program fits into the memory
             if (binary.length > memory.data.length)
                 throw "Binary code does not fit into the memory. Max " + memory.data.length + " bytes are allowed";
 
+            // writes the machine-program into the memory. Begin at cell 0
             for (var i = 0, l = binary.length; i < l; i++) {
                 memory.data[i] = binary[i];
             }
-        } catch (e) {
+        } catch (e) { // error case
+
+            // makes sure it raise a proper error-message
             if (e.line !== undefined) {
                 $scope.error = e.line + " | " + e.error;
                 $scope.selectedLine = e.line;
@@ -1495,18 +1520,26 @@ var app = angular.module('ASMSimulator', []);
         }
     };
 
+    // for selection of the particular code lines in the code view.
     $scope.jumpToLine = function (index) {
         $document[0].getElementById('sourceCode').scrollIntoView();
         $scope.selectedLine = $scope.mapping[index];
     };
 
 
+    // checks whether the selected code lines is a valid instruction.
     $scope.isInstruction = function (index) {
         return $scope.mapping !== undefined &&
             $scope.mapping[index] !== undefined &&
             $scope.displayInstr;
     };
 
+    /*
+        getMemoryCellCss
+        getMemoryInnerCellCss
+
+        for controlling the css of the memory view in the UI.
+    */
     $scope.getMemoryCellCss = function (index) {
         if (index >= $scope.outputStartIndex) {
             return 'output-bg';
@@ -1536,7 +1569,8 @@ var app = angular.module('ASMSimulator', []);
             return '';
         }
     };
-}]);
+}]); // end of the controller
+
 ;app.filter('flag', function() {
     return function(input) {
         return input.toString().toUpperCase();
