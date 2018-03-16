@@ -9,9 +9,10 @@
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 </head>
 <body ng-controller="Ctrl">
-    <a href="https://github.com/Schweigi/assembler-simulator"><img style="z-index:1001;position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+    <a href="https://github.com/christianbender/assembler-simulator"><img style="z-index:1001;position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
     <nav class="navbar navbar-inverse" role="navigation" style="background-color:#428BCA;border:0px;border-radius:0px;">
         <div class="container">
+            <!-- header of the app-->
             <div class="navbar-header">
                 <div class="btn-group">
                     <button type="button" class="btn btn-success navbar-btn" ng-click="run()" ng-hide="isRunning"><span class="glyphicon glyphicon-play"></span> Run</button>
@@ -23,6 +24,7 @@
             <div class="navbar-header navbar-right">
                 <a class="navbar-brand" style="color:#FFFFFF">Simple 8-bit Assembler Simulator</a>
             </div>
+            <!-- end header division -->
         </div>
     </nav>
     <div class="container">
@@ -35,6 +37,7 @@
                     </div>
                     <div class="panel-body">
                         <form role="form">
+                            <!-- input field for the source code -->
                             <textarea id="sourceCode"
                                       class="form-control source-code"
                                       style="margin-bottom:5px;"
@@ -53,6 +56,7 @@
                     <div class="panel-heading">
                         <h4 class="panel-title">Output</h4>
                     </div>
+                    <!-- console division; output -->
                     <div class="panel-body source-code">
                         <div style="float:left;" class="output"
                              ng-repeat="m in memory.data | startFrom: outputStartIndex track by $index">
@@ -64,6 +68,7 @@
                     <div class="panel-heading">
                         <h4 class="panel-title">CPU & Memory</h4>
                     </div>
+                    <!-- registers and flags -->
                     <div class="panel-body">
                         <p class="text-muted">Registers / Flags</p>
                         <table class="table table-condensed table-striped">
@@ -94,6 +99,7 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <!-- RAM -->
                         <p class="text-muted">RAM</p>
                         <div style="width:29em;" class="source-code">
                             <div class="memory-block"
