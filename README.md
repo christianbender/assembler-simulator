@@ -1,5 +1,18 @@
 # Simple 8-bit Assembler Simulator
-A simulator which provides a simplified assembler syntax (based on NASM) and is simulating a x86 like cpu. Press Help inside the simulator to see an overview about the supported instructions. **This repository is a fork off [Schweigi/assembler-simulator](https://github.com/Schweigi/assembler-simulator)**  
+A simulator which provides a simplified assembler syntax (based on NASM) and is simulating a x86 like cpu. Press Help inside the simulator to see an overview about the supported instructions.  
+
+**This repository is a fork off [Schweigi/assembler-simulator](https://github.com/Schweigi/assembler-simulator)**  
+
+---
+
+### Changes that I have done  
+
+- Documented the code. Put in some comments.  
+- In the example code I put a mention: ```You can also write in lowercase symbols```  
+- Changed the repository link (Fork me on GitHub) in the ```index.html``` to this repository.  
+- Changed the ```README.md```  
+
+---
 
 [TRY IT](http://christianbender.github.io/assembler-simulator)  
 
@@ -23,8 +36,4 @@ A technical introduction is available on my blog: [www.mschweighauser.com](https
 
 I use this repository as exercise for make me fit of open source projects.  
 
-### Changes that I have done  
 
-- Documented the code. Put in some comments.  
-- In the example code I put a mention: ```You can also write in lowercase symbols```  
-- Changed the repository link (Fork me on GitHub) in the ```index.html``` to this repository.  
