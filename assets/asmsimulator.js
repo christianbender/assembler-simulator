@@ -1,4 +1,6 @@
 var app = angular.module('ASMSimulator', []);
+
+// definition of the assembler-services 
 ;app.service('assembler', ['opcodes', function (opcodes) {
     return {
         go: function (input) {
@@ -26,6 +28,8 @@ var app = angular.module('ASMSimulator', []);
 
             // Split text into code lines
             var lines = input.split('\n');
+
+            // some helper-functions goes here.
 
             // Allowed formats: 200, 200d, 0xA4, 0o48, 101b
             var parseNumber = function (input) {
@@ -110,7 +114,7 @@ var app = angular.module('ASMSimulator', []);
             var parseRegOrNumber = function (input, typeReg, typeNumber) {
                 var register = parseRegister(input);
 
-                if (register !== undefined) {
+                if (register !== undefined) { // not a register
                     return {type: typeReg, value: register};
                 } else {
                     var label = parseLabel(input);
@@ -143,6 +147,10 @@ var app = angular.module('ASMSimulator', []);
                 return regexLabel.exec(input) ? input : undefined;
             };
 
+            /*
+                parses the input string and returns a JSON at the form:
+                {type value}
+            */
             var getValue = function (input) {
                 switch (input.slice(0, 1)) {
                     case '[': // [number] or [register]
@@ -168,6 +176,10 @@ var app = angular.module('ASMSimulator', []);
                 }
             };
 
+
+            /*
+                registers a label in the array 'labels'
+            */
             var addLabel = function (label) {
                 var upperLabel = label.toUpperCase();
                 if (upperLabel in normalizedLabels)
@@ -185,14 +197,21 @@ var app = angular.module('ASMSimulator', []);
                 }
             };
 
+            // iterates over all lines
             for (var i = 0, l = lines.length; i < l; i++) {
                 try {
+
+                    // for matching the valid code lines.
                     var match = regex.exec(lines[i]);
+                    // console.log("match[0]="+match[0]+" match[1]="+match[1]+" match[2]="+match[2] + " match[3]="+match[3]); //DEBUG
                     if (match[1] !== undefined || match[2] !== undefined) {
+
+                        // recognizes a label
                         if (match[1] !== undefined) {
                             addLabel(match[1]);
                         }
 
+                        // recognizes a instruction
                         if (match[2] !== undefined) {
                             var instr = match[2].toUpperCase();
                             var p1, p2, opCode;
@@ -203,6 +222,7 @@ var app = angular.module('ASMSimulator', []);
                                 mapping[code.length] = i;
                             }
 
+                            // processing the instructions.
                             switch (instr) {
                                 case 'DB':
                                     p1 = getValue(match[op1_group]);
@@ -224,6 +244,8 @@ var app = angular.module('ASMSimulator', []);
                                     break;
 
                                 case 'MOV':
+
+                                    // fetches the arguments
                                     p1 = getValue(match[op1_group]);
                                     p2 = getValue(match[op2_group]);
 
@@ -249,6 +271,8 @@ var app = angular.module('ASMSimulator', []);
                                     code.push(opCode, p1.value, p2.value);
                                     break;
                                 case 'ADD':
+
+                                    // fetches the arguments
                                     p1 = getValue(match[op1_group]);
                                     p2 = getValue(match[op2_group]);
 
@@ -284,6 +308,8 @@ var app = angular.module('ASMSimulator', []);
                                     break;
                                 case 'INC':
                                     p1 = getValue(match[op1_group]);
+
+                                    // make sure only given one argument!
                                     checkNoExtraArg('INC', match[op2_group]);
 
                                     if (p1.type === "register")
@@ -307,6 +333,8 @@ var app = angular.module('ASMSimulator', []);
 
                                     break;
                                 case 'CMP':
+
+                                    // fetches the arguments
                                     p1 = getValue(match[op1_group]);
                                     p2 = getValue(match[op2_group]);
 
@@ -615,6 +643,7 @@ var app = angular.module('ASMSimulator', []);
                         }
                     }
                 } catch (e) {
+                    // error per line
                     throw {error: e, line: i};
                 }
             }
@@ -630,21 +659,25 @@ var app = angular.module('ASMSimulator', []);
                     }
                 }
             }
-
+            
             return {code: code, mapping: mapping, labels: labels};
         }
     };
-}]);
+}]); // end of service assembler
+
 ;app.service('cpu', ['opcodes', 'memory', function(opcodes, memory) {
     var cpu = {
         step: function() {
             var self = this;
 
+            // makes sure none error is occured
             if (self.fault === true) {
                 throw "FAULT. Reset to continue.";
             }
 
             try {
+
+                // checkes the register
                 var checkGPR = function(reg) {
                     if (reg < 0 || reg >= self.gpr.length) {
                         throw "Invalid register: " + reg;
@@ -1365,7 +1398,8 @@ var app = angular.module('ASMSimulator', []);
     $scope.speed = 4;
     $scope.outputStartIndex = 232;
 
-    $scope.code = "; Simple example\n; Writes Hello World to the output\n\n	JMP start\nhello: DB \"Hello World!\" ; Variable\n       DB 0	; String terminator\n\nstart:\n	MOV C, hello    ; Point to var \n	MOV D, 232	; Point to output\n	CALL print\n        HLT             ; Stop execution\n\nprint:			; print(C:*from, D:*to)\n	PUSH A\n	PUSH B\n	MOV B, 0\n.loop:\n	MOV A, [C]	; Get char from var\n	MOV [D], A	; Write to output\n	INC C\n	INC D  \n	CMP B, [C]	; Check if end\n	JNZ .loop	; jump if not\n\n	POP B\n	POP A\n	RET";
+    // mention: for using lowercase symbols.
+    $scope.code = "; You can also write in lowercase symbols\n; Simple example\n; Writes Hello World to the output\n\n	JMP start\nhello: DB \"Hello World!\" ; Variable\n       DB 0	; String terminator\n\nstart:\n	MOV C, hello    ; Point to var \n	MOV D, 232	; Point to output\n	CALL print\n        HLT             ; Stop execution\n\nprint:			; print(C:*from, D:*to)\n	PUSH A\n	PUSH B\n	MOV B, 0\n.loop:\n	MOV A, [C]	; Get char from var\n	MOV [D], A	; Write to output\n	INC C\n	INC D  \n	CMP B, [C]	; Check if end\n	JNZ .loop	; jump if not\n\n	POP B\n	POP A\n	RET";
 
     $scope.reset = function () {
         cpu.reset();
