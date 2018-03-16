@@ -22,3 +22,7 @@ A technical introduction is available on my blog: [www.mschweighauser.com](https
 [Marco Schweighauser](https://github.com/Schweigi)  
 
 I use this repository as exercise for make me fit of open source projects.  
+
+### Changes that I have done  
+
+- Documented the code. Put in some comments.  
