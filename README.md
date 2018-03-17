@@ -11,6 +11,18 @@ A simulator which provides a simplified assembler syntax (based on NASM) and is 
 - In the example code I put a mention: ```You can also write in lowercase symbols```  
 - Changed the repository link (Fork me on GitHub) in the ```index.html``` to this repository.  
 - Changed the ```README.md```  
+- I added new commands:  
+  - SQ (sq) : squares the content of the given register.  
+  ```asm
+    mov a, 3
+    sq a ; after that the register A contains 9
+  ```
+  - POW (pow) : computes the power x^n  
+  ```asm
+    ; for example
+    mov a, 2
+    pow a, 3 ; after that the register A contains 8
+  ```
 
 ---
 
