@@ -1642,6 +1642,11 @@ var app = angular.module('ASMSimulator', []);
             return '';
         }
     };
+
+    // clears the code-input-field
+    $scope.clear = function () {
+        $("#sourceCode").val("");
+    }
 }]); // end of the controller
 
 ; app.filter('flag', function () {
