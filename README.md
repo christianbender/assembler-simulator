@@ -24,6 +24,12 @@ A simulator which provides a simplified assembler syntax (based on NASM) and is 
     mov a, 2
     pow a, 3 ; after that the register A contains 8
   ```
+  - MOD (mod) : computes the modulo a % b (a MOD b)  
+  ```asm
+    ; for example
+    mov a, 15
+    mod a, 4 ; after that the register A contains 3
+  ```  
 
 ---
 
