@@ -12,6 +12,7 @@ A simulator which provides a simplified assembler syntax (based on NASM) and is 
 - Changed the repository link (Fork me on GitHub) in the ```index.html``` to this repository.  
 - Changed the ```README.md```  
 - Added a ```CONTRIBUTION.md``` file.  
+- Changed the MIT-license.  
 - Added a clear button for clearing the code-input-field.  
 - I added new commands:  
   - SQ (sq) : squares the content of the given register.  
