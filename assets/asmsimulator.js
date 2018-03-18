@@ -667,6 +667,25 @@ var app = angular.module('ASMSimulator', []);
 
                                     code.push(opCode, p1.value, p2.value);
                                     break;
+                                case 'MOD': // my new extension MOD
+                                    // MOD computes the modulo
+                                    // fetches the arguments
+                                    p1 = getValue(match[op1_group]);
+                                    p2 = getValue(match[op2_group]);
+
+                                    if (p1.type === "register" && p2.type === "register")
+                                        opCode = opcodes.MOD_REG_TO_REG;
+                                    else if (p1.type === "register" && p2.type === "regaddress")
+                                        opCode = opcodes.MOD_REGADDRESS_TO_REG;
+                                    else if (p1.type === "register" && p2.type === "address")
+                                        opCode = opcodes.MOD_ADDRESS_TO_REG;
+                                    else if (p1.type === "register" && p2.type === "number")
+                                        opCode = opcodes.MOD_NUMBER_TO_REG;
+                                    else
+                                        throw "MOD does not support this operands";
+
+                                    code.push(opCode, p1.value, p2.value);
+                                    break;
                                 default:
                                     throw "Invalid instruction: " + match[2];
                             }
@@ -1304,6 +1323,32 @@ var app = angular.module('ASMSimulator', []);
                         setGPR_SP(regTo, checkOperation(Math.pow(getGPR_SP(regTo), number)));
                         self.ip++;
                         break;
+                    case opcodes.MOD_REG_TO_REG: // my new extension MOD
+                        regTo = checkGPR_SP(memory.load(++self.ip));
+                        regFrom = checkGPR_SP(memory.load(++self.ip));
+
+                        // computes the power
+                        setGPR_SP(regTo, checkOperation(getGPR_SP(regTo) % getGPR_SP(regFrom)));
+                        self.ip++;
+                        break;
+                    case opcodes.MOD_REGADDRESS_TO_REG: // my new extension MOD
+                        regTo = checkGPR_SP(memory.load(++self.ip));
+                        regFrom = memory.load(++self.ip);
+                        setGPR_SP(regTo, checkOperation(getGPR_SP(regTo) % memory.load(indirectRegisterAddress(regFrom))));
+                        self.ip++;
+                        break;
+                    case opcodes.MOD_ADDRESS_TO_REG: // my new extension MOD
+                        regTo = checkGPR_SP(memory.load(++self.ip));
+                        memFrom = memory.load(++self.ip);
+                        setGPR_SP(regTo, checkOperation(getGPR_SP(regTo) % memory.load(memFrom)));
+                        self.ip++;
+                        break;
+                    case opcodes.MOD_NUMBER_TO_REG: // my new extension MOD
+                        regTo = checkGPR_SP(memory.load(++self.ip));
+                        number = memory.load(++self.ip);
+                        setGPR_SP(regTo, checkOperation(getGPR_SP(regTo) % number));
+                        self.ip++;
+                        break;
                     default:
                         throw "Invalid op code: " + instr;
                 }
@@ -1448,7 +1493,11 @@ var app = angular.module('ASMSimulator', []);
         POW_REG_TO_REG: 121,
         POW_REGADDRESS_TO_REG: 122,
         POW_ADDRESS_TO_REG: 123,
-        POW_NUMBER_TO_REG: 124
+        POW_NUMBER_TO_REG: 124,
+        MOD_REG_TO_REG: 125,
+        MOD_REGADDRESS_TO_REG: 126,
+        MOD_ADDRESS_TO_REG: 127,
+        MOD_NUMBER_TO_REG: 128
     };
 
     return opcodes;
