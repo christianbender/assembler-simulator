@@ -1695,6 +1695,7 @@ var app = angular.module('ASMSimulator', []);
     // clears the code-input-field
     $scope.clear = function () {
         $("#sourceCode").val("");
+        $scope.code = "";
     }
 }]); // end of the controller
 
